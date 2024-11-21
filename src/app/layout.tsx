@@ -22,8 +22,7 @@ export default function RootLayout({
         <body className={`${manrope.className} bg-[#171717]`}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="dark"
             disableTransitionOnChange
           >
             {" "}

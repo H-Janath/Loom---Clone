@@ -1,5 +1,4 @@
 import { SignIn } from '@clerk/nextjs'
-import React from 'react'
 type Props = {}
 
 const SignInPage = (props: Props) => {
@@ -8,4 +7,4 @@ const SignInPage = (props: Props) => {
   )
 }
 
-export default SignIn
+export default SignInPage

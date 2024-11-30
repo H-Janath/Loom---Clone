@@ -3,68 +3,84 @@
 import { client } from '@/lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'
 
+
+
+
 export const onAuthenticateUser = async () => {
   try {
-    const user = await currentUser(); // Retrieve the current authenticated user.
+    const user = await currentUser()
     if (!user) {
-      return { status: 403 }; // Return 403 if no user is authenticated.
+      return { status: 403 }
     }
 
-    // Check if the user already exists in the database.
     const userExist = await client.user.findUnique({
       where: {
-        clerkid: user.id, // Match based on the Clerk user ID.
+        clerkid: user.id,
       },
       include: {
-        workspace: true, // Include the associated workspace records.
+        workspace: {
+          where: {
+            User: {
+              clerkid: user.id,
+            },
+          },
+        },
       },
-    });
-
+    })
+    
     if (userExist) {
-      // User already exists in the database.
-      return { status: 200, user: userExist };
+      return { status: 200, user: userExist }
     }
-
-    // If the user does not exist, create a new user along with a default workspace.
+    
     const newUser = await client.user.create({
       data: {
-        clerkid: user.id, // Clerk user ID.
-        email: user.emailAddresses[0].emailAddress, // Primary email address.
-        firstname: user.firstName, // First name from the Clerk profile.
-        lastname: user.lastName, // Last name from the Clerk profile.
-        image: user.imageUrl, // Profile image URL from Clerk.
-        // Create a default personal workspace for the new user.
+        clerkid: user.id,
+        email: user.emailAddresses[0].emailAddress,
+        firstname: user.firstName,
+        lastname: user.lastName,
+        image: user.imageUrl,
+        studio: {
+          create: {},
+        },
+        subscription: {
+          create: {},
+        },
         workspace: {
           create: {
-            name: `${user.firstName}'s Workspace`, // Default workspace name.
-            type: 'PERSONAL', // Workspace type.
+            name: `${user.firstName}'s Workspace`,
+            type: 'PERSONAL',
           },
         },
       },
       include: {
-        workspace: true, // Include the newly created workspace in the response.
+        workspace: {
+          where: {
+            User: {
+              clerkid: user.id,
+            },
+          },
+        },
+        subscription: {
+          select: {
+            plan: true,
+          },
+        },
       },
-    });
-
+    })
     if (newUser) {
-      // Successfully created a new user and workspace.
-      return { status: 201, user: newUser };
+      return { status: 201, user: newUser }
     }
-
-    // Return 400 if user creation fails for any reason.
-    return { status: 400 };
+    return { status: 400 }
   } catch (error) {
-    console.error('🔴 ERROR:', error);
-    // Return 500 in case of unexpected errors.
-    return { status: 500 };
+    console.log('🔴 ERROR', error)
+    return { status: 500 }
   }
-};
+}
 
 export const getNotifications = async () => {
   try {
     const user = await currentUser()
     if (!user) return { status: 404 }
-
     const notifications = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -79,9 +95,8 @@ export const getNotifications = async () => {
       },
     })
 
-    if (notifications?.notification?.length) {
+    if (notifications && notifications.notification.length > 0)
       return { status: 200, data: notifications }
-    }
     return { status: 404, data: [] }
   } catch (error) {
     return { status: 400, data: [] }
@@ -116,7 +131,7 @@ export const searchUsers = async (query: string) => {
       },
     })
 
-    if (users.length) {
+    if (users && users.length > 0) {
       return { status: 200, data: users }
     }
 
@@ -141,7 +156,6 @@ export const getPaymentInfo = async () => {
         },
       },
     })
-
     if (payment) {
       return { status: 200, data: payment }
     }
@@ -153,6 +167,7 @@ export const getPaymentInfo = async () => {
 export const enableFirstView = async (state: boolean) => {
   try {
     const user = await currentUser()
+
     if (!user) return { status: 404 }
 
     const view = await client.user.update({
@@ -176,7 +191,6 @@ export const getFirstView = async () => {
   try {
     const user = await currentUser()
     if (!user) return { status: 404 }
-
     const userData = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -185,7 +199,6 @@ export const getFirstView = async () => {
         firstView: true,
       },
     })
-
     if (userData) {
       return { status: 200, data: userData.firstView }
     }
@@ -199,35 +212,43 @@ export const createCommentAndReply = async (
   userId: string,
   comment: string,
   videoId: string,
-  commentId?: string
+  commentId?: string | undefined
 ) => {
   try {
     if (commentId) {
-      const reply = await client.comment.create({
+      const reply = await client.comment.update({
+        where: {
+          id: commentId,
+        },
         data: {
-          comment,
-          userId,
-          videoId,
-          Comment: {
-            connect: { id: commentId },
+          reply: {
+            create: {
+              comment,
+              userId,
+              videoId,
+            },
           },
         },
       })
-
       if (reply) {
         return { status: 200, data: 'Reply posted' }
       }
-    } else {
-      const newComment = await client.comment.create({
-        data: {
-          comment,
-          userId,
-          videoId,
-        },
-      })
-
-      if (newComment) return { status: 200, data: 'New comment added' }
     }
+
+    const newComment = await client.video.update({
+      where: {
+        id: videoId,
+      },
+      data: {
+        Comment: {
+          create: {
+            comment,
+            userId,
+          },
+        },
+      },
+    })
+    if (newComment) return { status: 200, data: 'New comment added' }
   } catch (error) {
     return { status: 400 }
   }
@@ -237,7 +258,6 @@ export const getUserProfile = async () => {
   try {
     const user = await currentUser()
     if (!user) return { status: 404 }
-
     const profileIdAndImage = await client.user.findUnique({
       where: {
         clerkid: user.id,
@@ -277,11 +297,15 @@ export const getVideoComments = async (Id: string) => {
   }
 }
 
+
+
 export const acceptInvite = async (inviteId: string) => {
   try {
     const user = await currentUser()
-    if (!user) return { status: 404 }
-
+    if (!user)
+      return {
+        status: 404,
+      }
     const invitation = await client.invite.findUnique({
       where: {
         id: inviteId,
@@ -297,18 +321,31 @@ export const acceptInvite = async (inviteId: string) => {
     })
 
     if (user.id !== invitation?.reciever?.clerkid) return { status: 401 }
+    const acceptInvite = client.invite.update({
+      where: {
+        id: inviteId,
+      },
+      data: {
+        accepted: true,
+      },
+    })
+
+    const updateMember = client.user.update({
+      where: {
+        clerkid: user.id,
+      },
+      data: {
+        members: {
+          create: {
+            workSpaceId: invitation.workSpaceId,
+          },
+        },
+      },
+    })
 
     const membersTransaction = await client.$transaction([
-      client.invite.update({
-        where: { id: inviteId },
-        data: { accepted: true },
-      }),
-      client.member.create({
-        data: {
-          workSpaceId: invitation?.workSpaceId!,
-          userId: user.id,
-        },
-      }),
+      acceptInvite,
+      updateMember,
     ])
 
     if (membersTransaction) {
@@ -319,3 +356,4 @@ export const acceptInvite = async (inviteId: string) => {
     return { status: 400 }
   }
 }
+

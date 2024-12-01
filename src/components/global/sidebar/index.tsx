@@ -185,7 +185,7 @@ function Sidebar({ activeWorkspaceId }: Props) {
          description="Unloack AI features like transition, AI summary, and more"
          footer={
           <Button className="text-sm w-full">
-            <Loader>
+            <Loader color="#000" state={false}>
               Update
             </Loader>
           </Button>

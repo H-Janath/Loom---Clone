@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { userQueryData } from "@/hooks/userQueryData";
+import { useQueryData } from "@/hooks/useQueryData";
 import { getWorksPaces } from "@/actions/workspace";
 import { NotificationProps, WorkspaceProps } from "@/types/index.type";
 import Modal from "../modal";
@@ -20,7 +20,6 @@ import Search from "../search";
 import { MENU_ITEMS } from "@/constant";
 import SidebarItems from "./sidebar-items";
 import { getNotifications } from "@/actions/user";
-import { it } from "node:test";
 import WorkspacePlaceholder from "./WorkspacePlaceholder";
 import GlobalCard from "../global-card";
 import { Button } from "@/components/ui/button";
@@ -36,10 +35,10 @@ function Sidebar({ activeWorkspaceId }: Props) {
   const route = useRouter();
   const pathName = usePathname();
 
-  const { data, isFetched } = userQueryData(["user-workspace"], getWorksPaces);
+  const { data, isFetched } = useQueryData(["user-workspace"], getWorksPaces);
 
   const menuItems = MENU_ITEMS(activeWorkspaceId);
-  const { data: notifications } = userQueryData(
+  const { data: notifications } = useQueryData(
     ["user-notifications"],
     getNotifications
   );

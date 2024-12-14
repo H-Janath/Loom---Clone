@@ -7,7 +7,6 @@ export const useMutationData= (
     onSuccess?:()=>void
 )=>{
     const client = useQueryClient();
-    const lient = useQueryClient()
     const {mutate,isPending} = useMutation({
         mutationKey,
         mutationFn,

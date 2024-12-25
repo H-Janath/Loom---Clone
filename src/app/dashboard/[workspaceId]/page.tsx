@@ -17,8 +17,9 @@ const Page = ({ params }: Props) => {
           <TabsList className="bg-transparent gap-2 pl-0">
             <TabsTrigger 
                 className="p-[13px] px-6 rounded-full data-[state=active]:bg-[#252525]"
-                value="videos"
-            >Videos</TabsTrigger>
+                value="videos">
+                  Videos
+            </TabsTrigger>
             <TabsTrigger
                   value="archive"
                   className="p-[13px] px-6 rounded-full data-[state=active]:bg-[#252525]"            

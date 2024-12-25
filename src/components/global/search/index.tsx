@@ -5,7 +5,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useMutationData } from '@/hooks/useMutationData'
 import { useSearch } from '@/hooks/useSearch'
 import { User } from 'lucide-react'
-
 import React from 'react'
 import Loader from '../loader'
 import { inviteMembers } from '@/actions/user'
@@ -15,7 +14,7 @@ type Props = {
 }
 
 const Search = ({ workspaceId }: Props) => {
-  const { query, onSearchQuery, isFetching, onUser } = useSearch(
+  const { query, onSearchQuery, isFetching, onUsers } = useSearch(
     'get-users',
     'USERS'
   )
@@ -42,11 +41,11 @@ const Search = ({ workspaceId }: Props) => {
         <div className="flex flex-col gap-y-2">
           <Skeleton className="w-full h-8 rounded-xl" />
         </div>
-      ) : !onUser ? (
+      ) : !onUsers ? (
         <p className="text-center text-sm text-[#a4a4a4]">No Users Found</p>
       ) : (
         <div>
-          {onUser.map((user) => (
+          {onUsers.map((user) => (
             <div
               key={user.id}
               className="flex gap-x-3 items-center border-2 w-full p-3 rounded-xl"

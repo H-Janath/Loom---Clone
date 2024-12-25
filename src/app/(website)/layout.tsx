@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode; // Correct type for React children
 };
 
-const Layout: React.FC<Props> = ({ children }) => {
+const Layout=({children}:Props)  => {
   return (
     <div className="container flex flex-col py-10 px-10 xl:px-0">
       <LandingPageNavBar />

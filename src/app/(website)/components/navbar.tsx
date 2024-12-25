@@ -25,7 +25,7 @@ const LandingPageNavBar = (props: Props) => {
         <Link href="/">Home</Link>
       </div>
       <Link href="/auth/sign-in">
-        <Button className="text-base flex-gap-x-2">
+        <Button className="text-base gap-x-2">
           <User fill="#000" />
           Login
         </Button>

@@ -40,28 +40,29 @@ export const verifyAccessToWorkspace= async(workspaceId:string)=>{
     }
 }
 
-export const getWorkspaceFolder = async (workSpaceId: string) =>{
+export const getWorkspaceFolders = async (workSpaceId: string) => {
     try {
-        const isFolder = await client.folder.findMany({
-            where:{
-                workSpaceId,
+      const isFolders = await client.folder.findMany({
+        where: {
+          workSpaceId,
+        },
+        include: {
+          _count: {
+            select: {
+              videos: true,
             },
-            include:{
-                _count:{
-                    select:{
-                        videos:true,
-                    },
-                },
-            },
-        })
-        if(isFolder && isFolder.length >0){
-            return {status:200, data:[]}
-        }
-        return {status: 404, data:[]}
+          },
+        },
+      })
+      if (isFolders && isFolders.length > 0) {
+        return { status: 200, data: isFolders }
+      }
+    console.log(isFolders)
+      return { status: 404, data: [] }
     } catch (error) {
-        return {status: 403, data:[]}
+      return { status: 403, data: [] }
     }
-}
+  }
 
 export const getAllUserVideos = async(workSpaceId: string)=>{
     try {
@@ -141,7 +142,7 @@ export const getWorksPaces = async ()=>{
                 }
             }
         })
-        console.log(workSpace)
+      
         if(workSpace){
             return {status: 200, data: workSpace}
         }
@@ -212,5 +213,72 @@ export const createWorkspace = async(name:string) => {
        return {status:401, data: "You are not authorized to create a workspace"}
     } catch (error) {
         return {status: 400}
+    }
+}
+
+export const renameFolders = async (folderId: string, name: string)=>{
+    try {
+        const folder = await client.folder.update({
+            where: {
+                id: folderId,
+            },
+            data:{
+                name,
+            }
+        })
+        if(folder){return {status: 200, data: "Folder renames"}}
+        return {status: 400, data:'Folder does not exit'}
+    } catch (error) {
+        return {status: 500, data:'Opps! something went wrong'}
+    }
+}
+
+export const createFolder = async(workSpaceId:string)=>{
+    try {
+        const isNewFolder = await client.workSpace.update({
+            where:{
+                id:workSpaceId
+            },
+            data:{
+                folders:{
+                    create:{name:'Untitled'},
+                },
+            },
+        })
+        if(isNewFolder){
+            return {status:200 , message:"New Folder Created"}
+        }
+    } catch (error) {
+        return {status: 200, message:"Oppse something went wrong"}
+    }
+}
+
+export const getFolderInfo =async (folderId: string) =>{
+    try {
+        const folder = await client.folder.findUnique({
+            where:{
+                id:folderId,
+            },
+            select:{
+                name:true,
+                _count:{
+                    select:{
+                        videos:true
+                    },
+                },
+            },
+        })
+        if(folder) return{
+            status: 200, data:folder
+        }
+        return{
+            status: 400,
+            data: null
+        }
+    } catch (error) {
+        return{
+            status: 500,
+            data: null
+        }
     }
 }

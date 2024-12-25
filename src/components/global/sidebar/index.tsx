@@ -37,11 +37,12 @@ function Sidebar({ activeWorkspaceId }: Props) {
 
   const { data, isFetched } = useQueryData(["user-workspace"], getWorksPaces);
 
-  const menuItems = MENU_ITEMS(activeWorkspaceId);
   const { data: notifications } = useQueryData(
     ["user-notifications"],
     getNotifications
   );
+  
+  const menuItems = MENU_ITEMS(activeWorkspaceId);
   const { data: workspace } = data as WorkspaceProps;
   const { data: count } = notifications as NotificationProps;
 
@@ -193,7 +194,7 @@ function Sidebar({ activeWorkspaceId }: Props) {
         )}
     </div>
   );
-  return <div className="full ">
+  return <div className="full">
     {<InfoBar/>}
     {}
     <div className="md:hidden fixed my-4">

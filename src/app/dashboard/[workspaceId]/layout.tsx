@@ -4,7 +4,7 @@ import {
 } from '@/actions/user';
 import {
   getAllUserVideos,
-  getWorkspaceFolder,
+  getWorkspaceFolders,
   getWorksPaces,
   verifyAccessToWorkspace,
 } from '@/actions/workspace';
@@ -25,7 +25,6 @@ const Layout = async ({ params: { workspaceId }, children }: Props) => {
     redirect('/auth/sign-in');
   }
 
-  console.log(workspaceId)
   // Check workspace access
   const hasAccess = await verifyAccessToWorkspace(workspaceId);
   if (hasAccess.status !== 200) {
@@ -38,14 +37,14 @@ const Layout = async ({ params: { workspaceId }, children }: Props) => {
   // Initialize QueryClient and prefetch data
   const queryClient = new QueryClient();
 
-  try {
+ 
     await Promise.all([
       queryClient.prefetchQuery({
-        queryKey: ['workspace-folders', workspaceId],
-        queryFn: () => getWorkspaceFolder(workspaceId),
+        queryKey: ['workspace-folders'],
+        queryFn: () => getWorkspaceFolders(workspaceId),
       }),
       queryClient.prefetchQuery({
-        queryKey: ['user-videos', workspaceId],
+        queryKey: ['user-videos'],
         queryFn: () => getAllUserVideos(workspaceId),
       }),
       queryClient.prefetchQuery({
@@ -57,12 +56,10 @@ const Layout = async ({ params: { workspaceId }, children }: Props) => {
         queryFn: getNotifications,
       }),
     ]);
-  } catch (error) {
-    console.error('Error prefetching data:', error);
-    redirect('/error');
-  }
+ 
 
   const dehydratedState = dehydrate(queryClient);
+
 
   return (
     <HydrationBoundary state={dehydratedState}>

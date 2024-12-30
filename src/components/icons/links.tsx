@@ -9,9 +9,10 @@ export const Links = () => {
     >
       <path
         fill-rule="evenodd"
-        clipRule="evenodd"
+        clip-rule="evenodd"
         d="M2 12C2 9.23858 4.23858 7 7 7H10C10.5523 7 11 7.44772 11 8C11 8.55228 10.5523 9 10 9H7C5.34315 9 4 10.3431 4 12C4 13.6569 5.34315 15 7 15H10C10.5523 15 11 15.4477 11 16C11 16.5523 10.5523 17 10 17H7C4.23858 17 2 14.7614 2 12Z"
         fill="#434343"
+      
       />
       <path
         fill-rule="evenodd"

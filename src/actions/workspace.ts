@@ -99,7 +99,7 @@ export const getAllUserVideos = async(workSpaceId: string)=>{
        
         if(videos && videos.length>0){
             return {
-                statu: 200, data: videos
+                status: 200, data: videos
             }
         }
         return {status:404 }
@@ -280,5 +280,27 @@ export const getFolderInfo =async (folderId: string) =>{
             status: 500,
             data: null
         }
+    }
+}
+
+export const moveVideoLocation =  async(
+    videoId: string,
+    workSpaceId: string,
+    folderId: string
+) => {
+    try {
+        const location = await client.video.update({
+            where:{
+                id:videoId,
+            },
+            data:{
+                folderId: folderId || null,
+                workSpaceId
+            },
+        })
+        if(location) return {status: 200, data: "Folder change successfully"}
+        return {status: 400, data: "Wprkspace/folder does not exist"}
+    } catch (error) {
+        return {status: 500, data: "Opps! something went wrong"}
     }
 }

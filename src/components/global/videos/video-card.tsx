@@ -75,11 +75,11 @@ const VideoCard = (props: Props) => {
                 <User/>
                 </AvatarFallback>
               </Avatar>
-              <div className="">
+              <div>
                 <p className="capitalize text-xs text-[#BDBDBD]">
                   {props.User?.firstname} {props.User?.lastname}
                 </p>
-                <p className="text-[#6b6b6b] text-xs flex items-center">
+                <p className="text-[#707070] text-xs flex items-center">
                   <Dot/> {daysAgo === 0? 'Today': `${daysAgo} days ago`}
                 </p>
               </div>

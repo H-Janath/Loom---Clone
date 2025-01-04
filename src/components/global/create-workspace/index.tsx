@@ -1,16 +1,16 @@
 "use client";
-import { getWorksPaces } from "@/actions/workspace";
 import React from "react";
 import Modal from "../modal";
 import { Button } from "@/components/ui/button";
 import { useQueryData } from "@/hooks/useQueryData";
 import FolderPlusDuotine from "@/components/icons/folder-plus-duotone";
 import WorkspaceForm from "@/components/forms/workspace-from";
+import { getWorkSpaces } from "@/actions/workspace";
 
 type Props = {};
 
 const CreateWorkspace = (props: Props) => {
-  const { data } = useQueryData(["user-workspace"], getWorksPaces);
+  const { data } = useQueryData(["user-workspaces"], getWorkSpaces);
 
   const { data: plan } = data as {
     status: number;

@@ -1,4 +1,3 @@
-
 import React from 'react'
 import Modal from '../modal'
 import { Move } from 'lucide-react'

@@ -5,7 +5,7 @@ import {
 import {
   getAllUserVideos,
   getWorkspaceFolders,
-  getWorksPaces,
+  getWorkSpaces,
   verifyAccessToWorkspace,
 } from '@/actions/workspace';
 import GlobalHeader from '@/components/global/global-header';
@@ -48,8 +48,8 @@ const Layout = async ({ params: { workspaceId }, children }: Props) => {
         queryFn: () => getAllUserVideos(workspaceId),
       }),
       queryClient.prefetchQuery({
-        queryKey: ['user-workspace'],
-        queryFn: getWorksPaces,
+        queryKey: ['user-workspaces'],
+        queryFn: getWorkSpaces,
       }),
       queryClient.prefetchQuery({
         queryKey: ['user-notifications'],

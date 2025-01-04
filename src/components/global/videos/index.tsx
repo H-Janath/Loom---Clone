@@ -21,8 +21,6 @@ const Videos = ({ folderId, videosKey, workspaceId }: Props) => {
 
   const { status: videosStatus, data: videos } = videoData as VideosProps
 
-console.log(videoData)
-
   return (
     <div className="flex flex-col gap-4 mt-4">
       <div className="flex items-center justify-between">

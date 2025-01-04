@@ -1,22 +1,21 @@
-"use client"
-
-import { combineReducers,configureStore } from "@reduxjs/toolkit"
+'use client'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import FolderReducer from './slices/folders'
-import WorkspaceReducer from './slices/workspaces'
-import {TypedUseSelectorHook, useSelector} from 'react-redux'
+import WorkSpaceReducer from './slices/workspaces'
+
+import { TypedUseSelectorHook, useSelector } from 'react-redux'
 
 const rootReducer = combineReducers({
-    FolderReducer,
-    WorkspaceReducer
+  FolderReducer,
+  WorkSpaceReducer,
 })
 
 export const store = configureStore({
-    reducer: rootReducer,
-    middleware:(getDefaultMiddleware)=>
-       getDefaultMiddleware({
-        serializableCheck: false,
-       }),
-    
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

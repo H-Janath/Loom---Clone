@@ -9,5 +9,5 @@ export const useCreateWorkspace = () => {
     );
    
     const {errors,onFormSubmit,register} = useZodForm(workspaceSchema,mutate);
-    return {errors,onFormSubmit,register,isPending};
+    return {errors,onFormSubmit,isPending,register};
 }

@@ -1,7 +1,7 @@
 'use server'
 
 import { client } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server"
+import { auth, currentUser } from "@clerk/nextjs/server"
 
 export const verifyAccessToWorkspace= async(workspaceId:string)=>{
     try {
@@ -108,48 +108,51 @@ export const getAllUserVideos = async(workSpaceId: string)=>{
     }
 }
 
-export const getWorksPaces = async ()=>{
+export const getWorkSpaces = async () => {
     try {
-        const user = await currentUser();
-        if(!user) return {status: 404}
-        const workSpace = await client.user.findUnique({
-            where:{
-                clerkid: user.id,
-            },
+      const user = await currentUser()
+  
+      if (!user) return { status: 404 }
+  
+      const workspaces = await client.user.findUnique({
+        where: {
+          clerkid: user.id,
+        },
+        select: {
+          subscription: {
             select: {
-                subscription:{
-                    select:{
-                        plan:true,
-                    },
+              plan: true,
+            },
+          },
+          workspace: {
+            select: {
+              id: true,
+              name: true,
+              type: true,
+            },
+          },
+          members: {
+            select: {
+              WorkSpace: {
+                select: {
+                  id: true,
+                  name: true,
+                  type: true,
                 },
-                workspace:{
-                    select:{
-                        id: true,
-                        name: true,
-                        type: true,
-                    },
-                },
-                members: {
-                    select: {
-                        WorkSpace:{
-                            select:{
-                                id:true,
-                                name:true,
-                                type: true,
-                            }
-                        }
-                    }
-                }
-            }
-        })
-      
-        if(workSpace){
-            return {status: 200, data: workSpace}
-        }
+              },
+            },
+          },
+        },
+      })
+  
+      if (workspaces) {
+        return { status: 200, data: workspaces }
+      }
     } catch (error) {
-        return { status: 400}
+      return { status: 400 }
     }
-} 
+  }
+  
 
 export const getNotifications = async()=>{
     try {
@@ -302,5 +305,51 @@ export const moveVideoLocation =  async(
         return {status: 400, data: "Wprkspace/folder does not exist"}
     } catch (error) {
         return {status: 500, data: "Opps! something went wrong"}
+    }
+}
+
+
+export const getPreviewVideo = async (videoId: string) =>{
+    try {
+        const user = await currentUser();
+        if(!user) return {status: 404}
+        const video = await client.video.findUnique({
+            where:{
+                id: videoId,
+            },
+            select: {
+                title: true,
+                createdAt: true,
+                source: true,
+                description: true,
+                processing: true,
+                views : true,
+                summery: true,
+                User:{
+                    select:{
+                        firstname: true,
+                        lastname: true,
+                        image: true,
+                        clerkid: true,
+                        trial: true,
+                        subscription:{
+                            select:{
+                                plan:true
+                            },
+                        },
+                    },
+                },
+            },
+        })
+        if(video) {
+            return {
+                status: 200,
+                data: video, 
+                author: user.id === video.User?.clerkid ? true : false,
+            }
+        }
+        return {status:404}
+    } catch (error) {
+       return {status: 400}         
     }
 }

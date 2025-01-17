@@ -9,14 +9,19 @@ import RichLink from '../rich-link'
 import { truncateString } from '@/lib/utils'
 import { Download } from 'lucide-react'
 import TabMenu from '../../tabs'
+import AiTools from '../../ai-tools'
+import VideoTranscript from '../../video-transcript'
+import { TabsContent } from '@radix-ui/react-tabs'
+import Activities from '../../activities'
 
 type Props = {
     videoId: string
 }
 
 const VideoPreview = ({videoId}: Props) => {
-
+ 
   //WIP: setup notify first view
+  //WIP: setup activity
   const router = useRouter()
 
 
@@ -33,7 +38,7 @@ const VideoPreview = ({videoId}: Props) => {
     )
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 p-10 lg:px-20 lg:py-10 overflow-y-auto gap-5">
+    <div className="grid grid-cols-1 xl:grid-cols-3 lg:py-10 overflow-y-auto gap-5">
       <div className="flex flex-col lg:col-span-2 gap-y-10">
         <div className="">
           <div className="flex gap-x-5 items-start justify-between">
@@ -102,14 +107,25 @@ const VideoPreview = ({videoId}: Props) => {
         </div>
         <div className="">
           <TabMenu
-            defaultValue='all'
+            defaultValue='Ai tools'
             trigger={['Ai tools','Transcript','Activity']}
             >
-
+              <AiTools
+                videoId={videoId}
+                trial={video.User?.trial}
+                plan={video.User?.subscription?.plan}
+              />
+              <VideoTranscript transcript={video.description}/>
+              <Activities
+                author={video.User?.firstname as string}
+                videoId={videoId}
+              />
+              <TabsContent value='Activity'>
+                  Make changesto your account here.
+              </TabsContent>
             </TabMenu>
         </div>
       </div>
-
     </div>
   )
 }
